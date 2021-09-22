@@ -1,9 +1,6 @@
 const mongoose=require('mongoose');
 
 var RecordsSchema = new mongoose.Schema({
-    recordId: {
-        type:String
-    },
     name: {
         type:String
     },
@@ -11,7 +8,7 @@ var RecordsSchema = new mongoose.Schema({
         type:String
     },
     date: {
-        type:date
+        type:Date
     }
 });
 

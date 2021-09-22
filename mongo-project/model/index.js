@@ -7,3 +7,5 @@ mongoose.connect('mongodb://localhost:27017/blog',(error)=>{
         console.log('Connection error');
     }
 });
+
+const records = require('./records.model');
