@@ -1,18 +1,26 @@
 
-<h1>Records list</h1>
-<table class="table-auto">
-    <tr>
-        <th>Name</th>
-        <th>Text</th>
-        <th>Date</th>
-        <th>Edit</th>
-    </tr>
-    {{#each data}}
-    <tr>
-        <td>{{this.name}}</td>
-        <td>{{this.text}}</td>
-        <td>{{this.date}}</td>
-        <td><a href="records/edit/{{_id}}">Edit</a></td>
-    </tr>
-    {{~/each}}
-</table>
+<div class="flex items-center justify-center min-h-screen">
+	<div class="col-span-12">
+        <h1 class="bg-gray-800 text-center text-gray-500 border-radius">Records list</h1>
+		<div class="overflow-auto">
+            <table class="table text-gray-400 border-separate space-y-6 text-sm">
+                <thead class="bg-gray-800 text-gray-500">
+                     <tr>
+                        <th class="p3">Name</th>
+                        <th class="p3">Text</th>
+                        <th class="p3">Date</th>
+                        <th class="p3">Edit</th>
+                    </tr>
+                </thead>
+                {{#each data}}
+                <tr class="bg-gray-800">
+                    <td class="p-3">{{this.name}}</td>
+                    <td class="p-3">{{this.text}}</td>
+                    <td class="p-3">{{this.date}}</td>
+                    <td class="p-3"><a class="text-gray-400 text-gray-100 mx-2" href="records/edit/{{_id}}">Edit</a></td>
+                </tr>
+                {{~/each}}
+            </table>
+        </div>
+    </div>
+</div>
