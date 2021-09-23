@@ -16,6 +16,7 @@
     "handlebars-dateformat": "^1.1.1",
     "hbs": "^4.1.2",
     "mongoose": "^6.0.6",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "validator": "^13.6.0"
   }
 }

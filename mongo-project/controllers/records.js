@@ -22,8 +22,28 @@ router.get('/',(req,res)=>{
     
 });
 
+router.get('/sort/desc',(req,res)=>{
+
+    // get records
+    RecordsModel.find((error,info)=>{
+        if(!error){
+            info.forEach(function(item){
+                var date = new Date(item.date);
+                item.date = date.toLocaleDateString('lt-LT');
+                item._id = item._id.toString();
+            });
+            res.render('list',{data:info});
+        }else{
+            res.send('An error has occured');
+        }
+    }).collation({locale: 'lt'}).sort({name: -1}).lean();
+    
+});
+
 router.get('/add',(req,res)=>{
-    res.render('add');
+    var date=new Date();
+    date = date.toLocaleDateString('lt-LT');
+    res.render('add',{today:date});
 });
 
 router.post('/edit_submit',(req,res)=>{
@@ -77,7 +97,7 @@ router.post('/search',(req,res)=>{
                 item.date = date.toLocaleDateString('lt-LT');
                 item._id = item._id.toString();
             });
-            res.render('found',{data:info});
+            res.render('found',{search:s,data:info});
         }else{
             res.send('An error has occured');
         }
