@@ -27,12 +27,14 @@ router.get('/add',(req,res)=>{
 });
 
 router.post('/edit_submit',(req,res)=>{
-    RecordsModel.findOneAndUpdate({_id:req.body.id},{
+    RecordsModel.findByIdAndUpdate(req.body.id,{
         name: req.body.name,
         text: req.body.text,
         date: req.body.date
-    })
-    res.redirect('/records');
+    }).then(data =>{
+        res.redirect('/records');
+    });
+
 });
 
 router.get('/edit/:id',(req,res)=>{
@@ -62,16 +64,25 @@ router.post('/submit',(req,res)=>{
     res.redirect('/records');
 });
 
-// router.get('/search/:s',(req,res)=>{
-//     const s=req.params.s;
-//     RecordsModel.find({$name:{$regex:s}},(error,info)=>{
-//         if(!error){
-//             res.send(info);
-//         }else{
-//             res.send('An error has occured');
-//         }
-//     }).collation({locale: 'lt'}).sort({name: 1}).lean();
-// });
+router.get('/search',(req,res)=>{
+    res.render('search');
+});
+
+router.post('/search',(req,res)=>{
+    const s=req.body.search;
+    RecordsModel.find({$text:{$search:s}},(error,info)=>{
+        if(!error){
+               info.forEach(function(item){
+                var date = new Date(item.date);
+                item.date = date.toLocaleDateString('lt-LT');
+                item._id = item._id.toString();
+            });
+            res.render('found',{data:info});
+        }else{
+            res.send('An error has occured');
+        }
+    }).collation({locale: 'lt'}).sort({name: 1}).lean();
+});
 
 module.exports=router;
 
