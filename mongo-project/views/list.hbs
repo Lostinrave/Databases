@@ -1,25 +1,27 @@
-<a href="/records/search">Search</a>
-<a href="/records/add">Add</a>
-<a href="/records/sort/desc">Decend</a>
 <div class="flex items-center justify-center min-h-screen">
 	<div class="col-span-12">
-        <h1 class="bg-gray-800 text-center text-gray-500 border-radius">Records list</h1>
+        <h1 class="bg-gray-800 text-center text-gray-500 border-radius shadow-lg p-1">Records list</h1>
 		<div class="overflow-auto">
             <table class="table text-gray-400 border-separate space-y-6 text-sm">
                 <thead class="bg-gray-800 text-gray-500">
-                     <tr>
-                        <th class="p3">Name</th>
+                     <tr class="shadow-lg">
+                        <th class="p3 ">Name</th>
                         <th class="p3">Text</th>
                         <th class="p3">Date</th>
                         <th class="p3">Edit</th>
+                        <th class="p3">View</th>
+                        <th class="p3">Delete</th>
+
                     </tr>
                 </thead>
                 {{#each data}}
-                <tr class="bg-gray-800">
+                <tr class="bg-gray-800 shadow-lg">
                     <td class="p-3">{{this.name}}</td>
                     <td class="p-3">{{this.text}}</td>
                     <td class="p-3">{{this.date}}</td>
                     <td class="p-3"><a class="text-gray-400 text-gray-100 mx-2" href="records/edit/{{_id}}">Edit</a></td>
+                    <td class="p-3"><a class="text-gray-400 text-gray-100 mx-2" href="records/view/{{_id}}">View</a></td>
+                    <td class="p-3"><a class="text-gray-400 text-gray-100 mx-2" href="records/delete/{{_id}}">Delete</a></td>
                 </tr>
                 {{~/each}}
             </table>

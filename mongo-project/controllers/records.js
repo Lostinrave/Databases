@@ -57,6 +57,7 @@ router.post('/edit_submit',(req,res)=>{
 
 });
 
+
 router.get('/edit/:id',(req,res)=>{
    const id = req.params.id;
    RecordsModel.findById(id).lean().then(info=>{
@@ -71,6 +72,34 @@ router.get('/edit/:id',(req,res)=>{
         message:error.message
        });
    });
+});
+
+router.get('/view/:id',(req,res)=>{
+    const id = req.params.id;
+    RecordsModel.findById(id).lean().then(info=>{
+     var date = new Date(info.date);
+     info.date = date.toLocaleDateString('lt-LT');
+     res.render('view',{
+         view: info
+     });
+    }).catch(error=>{
+        res.json({
+         response: 'Failed',
+         message:error.message
+        });
+    });
+});
+
+router.get('/delete/:id',(req,res)=>{
+    const id = req.params.id;
+    RecordsModel.findByIdAndDelete(id).then(info=>{
+     res.redirect('/records');
+    }).catch(error=>{
+        res.json({
+         response: 'Failed',
+         message:error.message
+        });
+    });
 });
 
 router.post('/submit',(req,res)=>{

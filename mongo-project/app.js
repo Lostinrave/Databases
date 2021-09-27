@@ -14,10 +14,13 @@ app.set('views', path.join(__dirname,'/views/'));
 app.engine('hbs',hbs({
     extname:'hbs',
     defaultLayout: 'mainlayout',
-    layoutsDir: __dirname + '/views/layouts'
+    layoutsDir: __dirname + '/views/layouts',
+    partialsDir: __dirname + '/views/partials'
 }));
 
 app.set('view engine', 'hbs');
+
+
 
 app.use(express.static(publicPath));
 
