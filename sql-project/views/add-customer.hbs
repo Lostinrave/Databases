@@ -1,0 +1,40 @@
+<main class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Add new customer</h5>
+                    <form method="POST" action="/add-customer">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" value=""class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Surname</label>
+                            <input type="text" name="surname" value=""class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" value=""class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" value=""class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Photo</label>
+                            <input type="file" name="photo" value=""class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Comment</label>
+                            <textarea type="text" name="comment" value=""class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary" type="submit">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

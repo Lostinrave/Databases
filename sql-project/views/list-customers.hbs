@@ -1,0 +1,47 @@
+
+
+<main class="container">
+    <div class="row">
+        {{#if messages}}
+        <div class="alert alert-{{status}}">{{messages}}</div>
+        {{/if}}
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Customers list</h5>
+                    <table class="table">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>phone</th>
+                            <th>Email</th>
+                            <th>Photo</th>
+                            <th>Comment</th>
+                            <th>Company id</th>
+                        </tr>
+                        {{#each customers}}
+                        <tr>
+                            <td>{{id}}</td>
+                            <td>{{name}}</td>
+                            <td>{{surname}}</td>
+                            <td>{{phone}}</td>
+                            <td>{{email}}</td>
+                            <td>{{photo}}</td>
+                            <td>{{comment}}</td>
+                            <td>{{company_id}}</td>
+                            <td>
+                                <a href="/edit-customer/{{id}}" class="btn btn-success">Edit</a>
+                                <a href="/delete-customer/{{id}}" class="btn btn-danger">Delete</a>
+                                
+                            </td>
+
+                        </tr>
+                        {{/each}}
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

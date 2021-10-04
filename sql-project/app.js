@@ -35,13 +35,13 @@ app.get('/add-company',(req,res)=>{
 app.post('/add-company',(req,res)=>{
     let companyName = req.body.name;
     let companyAddress = req.body.address;
-    if(!validator.isAlphanumeric(companyName,'en-US',{ignore:' '})
+    if(!validator.isAlphanumeric(companyName,'en-US',{ignore:' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
     || 
     !validator.isLength(companyName,{min:3,max:50})){
         res.redirect('/list-companies/?message=Type in company name&s=danger');
         return;
     }
-    if(!validator.isAlphanumeric(companyAddress,'en-US',{ignore:' .'}) 
+    if(!validator.isAlphanumeric(companyAddress,'en-US',{ignore:' .ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
     || 
     !validator.isLength(companyAddress,{min:3,max:100})){
         res.redirect('/list-companies/?message=Type in company address&s=danger');
@@ -81,18 +81,30 @@ app.post('/edit-company',(req,res)=>{
     let companyName = req.body.name;
     let companyAddress = req.body.address;
     let id = req.body.id;
-    if(!validator.isLength(companyName,{min:3,max:50})){
+    if(!validator.isAlphanumeric(companyName,'en-US',{ignore:' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    ||!validator.isLength(companyName,{min:3,max:50})){
         res.redirect('/list-companies/?message=Wrong company name format&s=danger');
         return;
     }
-    if(!validator.isLength(companyAddress,{min:3,max:100})){
+    if(!validator.isAlphanumeric(companyAddress,'en-US',{ignore:' .ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    ||!validator.isLength(companyAddress,{min:3,max:100})){
         res.redirect('/list-companies/?message=Wrong company address format&s=danger');
         return;
     }
-    db.query(`UPDATE companies SET name='${companyName}',
-     address='${companyAddress}' WHERE id='${id}'`,err=>{
-        if(!err){
-            res.redirect('/list-companies?message=Successfully edited record&s=success');
+   
+    db.query(`SELECT * FROM companies WHERE name = '${companyName}' AND id != ${id}`,(err,resp)=>{
+        console.log(resp);
+        if(resp.length == 0){
+            db.query(`UPDATE companies SET name = '${companyName}',
+            address = '${companyAddress}' WHERE id ='${id}'`,err=>{
+               if(err){
+                   res.redirect('/list-companies/?message=An error has occured&s=danger');
+                   return;
+               }
+               res.redirect('/list-companies/?message=Successfully edited record&s=success');
+           });
+        }else{
+            res.redirect('/list-companies/?message=Company already exists&s=warning');
         }
     });
 });
@@ -122,6 +134,67 @@ app.get('/list-companies',(req,res)=>{
         }
     });
     
+});
+
+app.get('/list-customers',(req,res)=>{
+    let messages = req.query.message;
+    let status =req.query.s
+
+    db.query(`SELECT * FROM customers`,(err,resp)=>{
+        if(!err){
+            res.render('list-customers',{
+                customers: resp,
+                messages,
+                status
+            });
+        }
+    });
+    
+});
+
+app.get('/add-customer',(req,res)=>{
+    res.render('add-customer');
+});
+
+app.post('/add-customer',(req,res)=>{
+    let customerName = req.body.name;
+    let customerSurname = req.body.surname;
+    let customerPhone = req.body.phone;
+    let customerEmail = req.body.email;
+    let customerPhoto = req.body.photo;
+    let customerComment = req.body.comment;
+    if(!validator.isAlphanumeric(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    || 
+    !validator.isLength(customerName,{min:3,max:50})){
+        res.redirect('/list-customers/?message=Type in customer name&s=danger');
+        return;
+    }
+    if(!validator.isAlphanumeric(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    || 
+    !validator.isLength(customerSurname,{min:3,max:100})){
+        res.redirect('/list-customers/?message=Type in customer surname&s=danger');
+        return;
+    }
+    if(!validator.isMobilePhone(customerPhone) 
+    || 
+    !validator.isLength(customerPhone,{min:3,max:24})){
+        res.redirect('/list-customers/?message=Type in phone number&s=danger');
+        return;
+    }
+    if(!validator.isEmail(customerEmail) 
+    || 
+    !validator.isLength(customerEmail,{min:3,max:64})){
+        res.redirect('/list-customers/?message=Type in email address&s=danger');
+        return;
+    }
+    db.query(`INSERT INTO customers (name, surname, phone, email, photo, comment) VALUES (
+        '${customerName}','${customerSurname}','${customerPhone}','${customerEmail}','${customerPhoto}','${customerComment}')`,err=>{
+            if(err){
+                res.redirect('/list-customers/?message=An error has occured&s=danger');
+                return;
+            }
+            res.redirect('/list-customers/?message=Successfully added record&s=success');
+        }); 
 });
 
 app.listen('3000');
