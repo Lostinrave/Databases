@@ -5,4 +5,8 @@ $(window).scroll(function(){
     }else{
       $('nav').removeClass('animate');
     }
-  })
+  });
+
+  tinymce.init({
+    selector: '#mytextarea'
+  });

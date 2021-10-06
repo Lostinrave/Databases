@@ -2,8 +2,32 @@ const express = require('express');
 const app = express();
 const hbs = require('express-handlebars');
 const path = require('path');
+const multer  = require('multer');
+const storage = multer.diskStorage({
+    destination: 'uploads/',
+    filename: function (req, file, callback){
+        const uniqueSuffix = Date.now( + '-' + Math.round(Math.random()*1E9))
+        callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ 
+    fileFilter: function(req, file, callback){
+        if(file.mimetype != 'image/jpeg' && file.mimetype != 'image/png'){
+            return callback(new Error('Wrong image format'));
+        }
+        callback(null,true);
+    },
+    storage: storage
+});
 const db = require('./db/connection');
 const validator = require('validator');
+const session = require('express-session');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.use(express.urlencoded({
     extended:false
@@ -20,12 +44,13 @@ app.set('views', path.join(__dirname,'/views/'));
 
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname,'public')));
+app.use('/uploads', express.static('uploads'));
 app.use('/static', express.static('public'));
 app.use('/static/css', express.static(path.join(__dirname,'node_modules/bootstrap/dist/css')));
 app.use('/static/js', express.static(path.join(__dirname,'node_modules/bootstrap/dist/js')));
 
 app.get('/',(req,res)=>{
-    res.render('index');
+    res.render('login');
 });
 
 app.get('/add-company',(req,res)=>{
@@ -153,48 +178,146 @@ app.get('/list-customers',(req,res)=>{
 });
 
 app.get('/add-customer',(req,res)=>{
-    res.render('add-customer');
+db.query(`SELECT id, name FROM companies`,(err,resp)=>{
+    if(err){
+        res.render('add-customer',{
+            message: 'Unable to get companies.',
+            status: 'danger'
+        });
+    }else{
+        res.render('add-customer',{
+            companies:resp
+        });
+    }
 });
 
-app.post('/add-customer',(req,res)=>{
+    
+});
+
+app.post('/add-customer', upload.single('photo'),(req,res)=>{
     let customerName = req.body.name;
     let customerSurname = req.body.surname;
     let customerPhone = req.body.phone;
     let customerEmail = req.body.email;
-    let customerPhoto = req.body.photo;
+    // 'if' shorthand (req.file) - if condition ? - {req.file.filename} '' : - else '';
+    let customerPhoto = (req.file) ? req.file.filename : ''; 
     let customerComment = req.body.comment;
-    if(!validator.isAlphanumeric(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    let customerCompany = req.body.company_id;
+
+    //image/jpeg
+    //image/png
+
+    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
     || 
-    !validator.isLength(customerName,{min:3,max:50})){
+    !validator.isLength(customerName,{min:2,max:50})){
         res.redirect('/list-customers/?message=Type in customer name&s=danger');
         return;
     }
-    if(!validator.isAlphanumeric(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
     || 
     !validator.isLength(customerSurname,{min:3,max:100})){
         res.redirect('/list-customers/?message=Type in customer surname&s=danger');
         return;
     }
-    if(!validator.isMobilePhone(customerPhone) 
-    || 
-    !validator.isLength(customerPhone,{min:3,max:24})){
+    if(!validator.isMobilePhone(customerPhone)){
         res.redirect('/list-customers/?message=Type in phone number&s=danger');
         return;
     }
-    if(!validator.isEmail(customerEmail) 
-    || 
-    !validator.isLength(customerEmail,{min:3,max:64})){
+    if(!validator.isEmail(customerEmail)){
         res.redirect('/list-customers/?message=Type in email address&s=danger');
         return;
     }
-    db.query(`INSERT INTO customers (name, surname, phone, email, photo, comment) VALUES (
-        '${customerName}','${customerSurname}','${customerPhone}','${customerEmail}','${customerPhoto}','${customerComment}')`,err=>{
+    if(!validator.isInt(customerCompany)){
+        res.redirect('/list-customers/?message=Type in company id&s=danger');
+        return;
+    }
+    // if(customerComment){
+    //     comment = escape(comment);
+    // }
+    db.query(`INSERT INTO customers (name, surname, phone, email, photo, comment, company_id) VALUES (
+        '${customerName}','${customerSurname}','${customerPhone}','${customerEmail}','${customerPhoto}','${customerComment}','${customerCompany}')`,err=>{
             if(err){
                 res.redirect('/list-customers/?message=An error has occured&s=danger');
                 return;
             }
             res.redirect('/list-customers/?message=Successfully added record&s=success');
         }); 
+});
+
+app.get('/edit-customer/:id',(req,res)=>{
+    let id = req.params.id;
+    db.query(`SELECT * FROM customers WHERE id='${id}'`,(err,resp)=>{
+        if(!err){
+            db.query(`SELECT id, name FROM companies`,(error,companies)=>{
+                resp[0]['companies'] = companies;
+                console.log(companies);
+                console.log(resp);
+                res.render('edit-customer',{
+                    editCustomers:resp
+                });
+            });
+        }
+    });
+});
+
+app.post('/edit-customer', upload.single('photo'),(req,res)=>{
+    let customerName = req.body.name;
+    let customerSurname = req.body.surname;
+    let customerPhone = req.body.phone;
+    let customerEmail = req.body.email;
+    // 'if' shorthand (req.file) - if condition ? - {req.file.filename} '' : - else '';
+    let customerPhoto = (req.file) ? req.file.filename : ''; 
+    let customerComment = req.body.comment;
+    let customerCompany = req.body.company_id;
+    let id = req.body.id;
+
+    //image/jpeg
+    //image/png
+
+    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    || 
+    !validator.isLength(customerName,{min:2,max:50})){
+        res.redirect('/list-customers/?message=Type in customer name&s=danger');
+        return;
+    }
+    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    || 
+    !validator.isLength(customerSurname,{min:3,max:100})){
+        res.redirect('/list-customers/?message=Type in customer surname&s=danger');
+        return;
+    }
+    if(!validator.isMobilePhone(customerPhone)){
+        res.redirect('/list-customers/?message=Type in phone number&s=danger');
+        return;
+    }
+    if(!validator.isEmail(customerEmail)){
+        res.redirect('/list-customers/?message=Type in email address&s=danger');
+        return;
+    }
+    if(!validator.isInt(customerCompany)){
+        res.redirect('/list-customers/?message=Type in company id&s=danger');
+        return;
+    }
+    // if(customerComment){
+    //     comment = escape(comment);
+    // }
+    db.query(`UPDATE customers SET name = '${customerName}', surname = '${customerSurname}', phone = '${customerPhone}', email = '${customerEmail}', photo = '${customerPhoto}', comment = '${customerComment}', company_id = '${customerCompany}'WHERE id ='${id}'`,err=>{
+        if(err){
+            res.redirect('/list-customers/?message=An error has occured&s=danger');
+            return;
+        }
+        res.redirect('/list-customers/?message=Successfully edited record&s=success');
+    }); 
+});
+
+app.get('/delete-customer/:id',(req,res)=>{
+    let id = req.params.id;
+    db.query(`DELETE FROM customers WHERE id='${id}'`,(err,resp)=>{
+        if(!err){
+            res.redirect('/list-customers?message=Customer removed&s=danger');
+        }
+    });
+    
 });
 
 app.listen('3000');

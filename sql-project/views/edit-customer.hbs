@@ -6,32 +6,33 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-
-                    <h5 class="card-title">Add new customer</h5>
-                    <form method="POST" action="/add-customer" enctype="multipart/form-data">
+                    <h5 class="card-title">Edit customer</h5>
+                    <form method="POST" action="/edit-customer" enctype="multipart/form-data">
+                    {{#each editCustomers}}
+                    <input type="hidden" name="id" value="{{this.id}}">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                            <input type="text" name="name" value=""class="form-control">
+                            <input type="text" name="name" value="{{this.name}}"class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Surname</label>
-                            <input type="text" name="surname" value=""class="form-control">
+                            <input type="text" name="surname" value="{{this.surname}}"class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="tel" name="phone" value=""class="form-control">
+                            <input type="tel" name="phone" value="{{this.phone}}"class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" value=""class="form-control">
+                            <input type="email" name="email" value="{{this.email}}"class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Photo</label>
-                            <input type="file" name="photo" value=""class="form-control">
+                            <input type="file" name="photo" value="{{this.photo}}"class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Comment</label>
-                            <textarea type="text" name="comment" id="comment" value=""class="form-control"></textarea>
+                            <textarea type="text" name="comment" id="comment" class="form-control">{{{this.comment}}}</textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Company id</label>
@@ -44,8 +45,9 @@
 
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-primary" type="submit">Add</button>
+                            <button class="btn btn-success" type="submit">Edit</button>
                         </div>
+                        {{/each}}
                     </form>
                 </div>
             </div>
