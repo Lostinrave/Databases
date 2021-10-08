@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const hbs = require('express-handlebars');
 const path = require('path');
+const fs = require('fs');
 const multer  = require('multer');
 const storage = multer.diskStorage({
     destination: 'uploads/',
@@ -51,6 +52,21 @@ app.use('/static/js', express.static(path.join(__dirname,'node_modules/bootstrap
 
 app.get('/',(req,res)=>{
     res.render('login');
+});
+
+app.post('/login',(req,res)=>{
+    let user = req.body.email;
+    let pass = req.body.password;
+
+    if(user && pass){
+        db.query(`SELECT * FROM users WHERE email = '${user}' AND password = '${pass}'`, (err, user)=>{
+            if(!err && user.length > 0){
+                req.session.auth = true;
+
+            }
+        });
+    }
+    console.log(req.session);
 });
 
 app.get('/add-company',(req,res)=>{
@@ -164,17 +180,45 @@ app.get('/list-companies',(req,res)=>{
 app.get('/list-customers',(req,res)=>{
     let messages = req.query.message;
     let status =req.query.s
-
-    db.query(`SELECT * FROM customers`,(err,resp)=>{
-        if(!err){
-            res.render('list-customers',{
-                customers: resp,
-                messages,
-                status
+    let company_id = req.query.company_id;
+    let customer_col = req.query.customer_col;
+    let position = req.query.position;
+    let where = (company_id) ? 'WHERE c.company_id = ' + company_id : '';
+    let order_by = (customer_col) ? 'ORDER BY c.' + customer_col : '';
+    let pos = (position) ? position : '';
+    console.log(customer_col);
+    
+    
+    db.query(`SELECT * FROM companies`,(err,companies)=>{
+        if(!err) {
+            if(company_id){
+                companies.forEach(function(val,index){
+                    if(company_id == val['id']){
+                        companies[index]['selected'] = true;
+                    }
+                });
+            }
+            db.query(`SELECT c.id, c.name, 
+            c.surname, c.phone, c.email, 
+            c.photo, c.company_id, 
+            co.name AS company_name FROM customers AS c
+            LEFT JOIN companies AS co
+            ON c.company_id = co.id ${where} ${order_by} ${pos}`,(err,resp)=>{
+                if(!err){
+                    res.render('list-customers',{
+                        customers: resp,
+                        companies,
+                        messages,
+                        status
+                    });
+                } else {
+                    res.redirect('/list-customers/?message=An error has ocured&s=danger')
+                }
             });
+        }else {
+            res.redirect('/list-customers/?message=An error has ocured&s=danger')
         }
     });
-    
 });
 
 app.get('/add-customer',(req,res)=>{
@@ -312,12 +356,22 @@ app.post('/edit-customer', upload.single('photo'),(req,res)=>{
 
 app.get('/delete-customer/:id',(req,res)=>{
     let id = req.params.id;
-    db.query(`DELETE FROM customers WHERE id='${id}'`,(err,resp)=>{
+    db.query(`SELECT photo FROM customers WHERE id='${id}'`, (err, customer)=>{
         if(!err){
-            res.redirect('/list-customers?message=Customer removed&s=danger');
+            if(customer[0]['photo']){
+                fs.unlink(__dirname + '../../uploads/' + customer[0]['photo'], err =>{
+                    if(err){
+                        res.redirect('/list-customers/?message=Unable to delete photo&s=danger');
+                    }
+                });
+            }
+            db.query(`DELETE FROM customers WHERE id='${id}'`,(err,resp)=>{
+                if(!err){
+                    res.redirect('/list-customers/?message=Customer removed&s=danger');
+                }
+            });
         }
     });
-    
 });
 
 app.listen('3000');

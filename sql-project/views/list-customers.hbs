@@ -5,6 +5,30 @@
         {{#if messages}}
         <div class="alert alert-{{status}}">{{messages}}</div>
         {{/if}}
+        {{#if customers}}
+        <div class="toolbar">
+            <form method="get" action="/list-customers">
+            <label class="form-label">Filter companies</label>
+            <select class="form-control" name="company_id" id="company_filter">
+                <option value="0">Unemployed</option>
+                {{#each companies}}
+                <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}}</option>
+                {{/each}}
+            </select>
+            <select class="form-control" name="customer_col" id="customer_col">
+                <option value="name">Name</option>
+                <option value="surname">Surname</option>
+                <option value="email">Email</option>
+                <option value="company_id">Company</option>
+            </select>
+            <select class="form-control" name="position" id="position">
+                <option value="ASC">a-z</option>
+                <option value="DESC">z-a</option>
+            </select>
+            <button type="submit" class="float-start btn btn-secondary mt-1 mb-3">Filter</button>
+            </form>
+        </div>
+        {{/if}}
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -17,8 +41,7 @@
                             <th>Surname</th>
                             <th>Phone</th>
                             <th>Email</th>
-                            <th>Comment</th>
-                            <th>Company id</th>
+                            <th>Company</th>
                         </tr>
                         {{#each customers}}
                         <tr>
@@ -32,8 +55,7 @@
                             <td>{{surname}}</td>
                             <td>{{phone}}</td>
                             <td>{{email}}</td>
-                            <td>{{{comment}}}</td>
-                            <td>{{company_id}}</td>
+                            <td>{{#if company_name}}{{company_name}}{{else}}Unemployed{{/if}}</td>
                             <td>
                                 <a href="/edit-customer/{{id}}" class="btn btn-success">Edit</a>
                                 <a href="/delete-customer/{{id}}" class="btn btn-danger">Delete</a>
