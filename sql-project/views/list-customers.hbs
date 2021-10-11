@@ -7,33 +7,33 @@
         {{/if}}
         {{#if customers}}
         <div class="toolbar">
-            <form method="get" action="/list-customers">
             <label class="form-label">Filter companies</label>
-            <select class="form-control" name="company_id" id="company_filter">
-                <option value="0">Unemployed</option>
-                {{#each companies}}
-                <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}}</option>
-                {{/each}}
-            </select>
-            <select class="form-control" name="customer_col" id="customer_col">
-                <option value="name">Name</option>
-                <option value="surname">Surname</option>
-                <option value="email">Email</option>
-                <option value="company_id">Company</option>
-            </select>
-            <select class="form-control" name="position" id="position">
-                <option value="ASC">a-z</option>
-                <option value="DESC">z-a</option>
-            </select>
-            <button type="submit" class="float-start btn btn-secondary mt-1 mb-3">Filter</button>
+            <form class="form-control bg-dark d-flex justify-content-center" method="get" action="/list-customers">
+                <select class="form-control me-1" name="company_id" id="company_filter">
+                    <option value="0">Unemployed</option>
+                    {{#each companies}}
+                    <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}}</option>
+                    {{/each}}
+                </select>
+                <select class="form-control ms-1 me-1" name="customer_col" id="customer_col">
+                    <option value="name">Name</option>
+                    <option value="surname">Surname</option>
+                    <option value="email">Email</option>
+                    <option value="company_id">Company</option>
+                </select>
+                <select class="form-control me-1 ms-1" name="position" id="position">
+                    <option value="ASC">a-z</option>
+                    <option value="DESC">z-a</option>
+                </select>
+                <button type="submit" class="btn btn-dark">Filter</button>
             </form>
         </div>
         {{/if}}
         <div class="col-md-12">
-            <div class="card">
+            <div class="card mt-3 bg-dark text-light">
                 <div class="card-body">
                     <h5 class="card-title">Customers list</h5>
-                    <table class="table">
+                    <table class="table text-light">
                         <tr>
                             <th>Photo</th>
                             <th>ID</th>
@@ -68,6 +68,8 @@
                     </table>
                 </div>
             </div>
+        </div>
+            {{>pagination}}
         </div>
     </div>
 </main>
