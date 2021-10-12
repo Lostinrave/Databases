@@ -1,0 +1,73 @@
+{{#if messages}}
+<div class="flex bg-blue-200 p-4">
+  <div class="mr-4">
+    <div class="h-10 w-10 text-white bg-blue-600 rounded-full flex justify-center items-center">
+      <i class="material-icons">info</i>
+    </div>
+  </div>
+  <div class="flex justify-between w-full">
+    <div class="text-blue-600">
+      <p class="mb-2 font-bold">
+        alert
+      </p>
+      <p class="text-xs">
+        {{messages}}
+      </p>
+    </div>
+  </div>
+</div>
+{{/if}}
+<div class="flex justify-center h-screen ">
+    <div class="flex flex-col m-auto">
+        <div class="w-full">
+            <div class="border-b border-gray-200 shadow">
+                <table>
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-2 text-xs text-gray-800">
+                                ID
+                            </th>
+                            <th class="px-6 py-2 text-xs text-gray-800">
+                                Name
+                            </th>
+                            <th class="px-6 py-2 text-xs text-gray-800">
+                                Surname
+                            </th>
+                            <th class="px-6 py-2 text-xs text-gray-800">
+                                Edit
+                            </th>
+                            <th class="px-6 py-2 text-xs text-gray-800">
+                                Delete
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {{#each authors}}
+                        <tr class="whitespace-nowrap">
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                {{id}}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900">
+                                    {{name}}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900">
+                                    {{surname}}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="/edit-author/{{id}}" class="px-4 py-1 text-sm text-white bg-gray-300 rounded">Edit</a>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="/delete-author/{{id}}" class="px-4 py-1 text-sm text-white bg-red-500 rounded">Delete</a>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
