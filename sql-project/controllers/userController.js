@@ -65,12 +65,18 @@ router.post('/login',(req,res)=>{
     let user = req.body.email;
     let pass = md5(req.body.password);
 
+
     if(user && pass){
         db.query(`SELECT * FROM users WHERE email = '${user}' AND password = '${pass}'`, (err, user)=>{
             if(!err && user.length > 0){
                 
                 req.session.auth = true;
                 req.session.user = user;
+                let hour = 3600000;
+
+                req.session.cookie.expires = new Date(Date.now() + hour);
+
+                req.session.cookie.maxAge = hour;
                 req.session.save();
             }
         });
@@ -79,9 +85,10 @@ router.post('/login',(req,res)=>{
 });
 
 router.get('/logout',(req,res)=>{
-    req.session.auth = false;
-    req.session.user = false;
-    req.session.save();
+    req.session.destroy();
+    // req.session.auth = false;
+    // req.session.user = false;
+    // req.session.save();
     res.redirect('/'); 
 });
 

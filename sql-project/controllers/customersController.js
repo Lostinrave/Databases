@@ -25,6 +25,10 @@ const upload = multer({
 
 
 router.get('/list-customers',(req,res)=>{
+        if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let messages = req.query.message;
     let status =req.query.s
     let company_id = req.query.company_id;
@@ -33,6 +37,7 @@ router.get('/list-customers',(req,res)=>{
     let where = (company_id) ? 'WHERE c.company_id = ' + company_id : '';
     let order_by = (customer_col) ? 'ORDER BY c.' + customer_col : '';
     let pos = (position) ? position : '';
+    let currentPage = 1;
     
     
     db.query(`SELECT * FROM companies`,(err,companies)=>{
@@ -68,6 +73,10 @@ router.get('/list-customers',(req,res)=>{
 });
 
 router.get('/add-customer',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     db.query(`SELECT id, name FROM companies`,(err,resp)=>{
         if(err){
             res.render('add-customer',{
@@ -83,6 +92,10 @@ router.get('/add-customer',(req,res)=>{
 });
 
 router.post('/add-customer', upload.single('photo'),(req,res)=>{
+        if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let customerName = req.body.name;
     let customerSurname = req.body.surname;
     let customerPhone = req.body.phone;
@@ -133,6 +146,10 @@ router.post('/add-customer', upload.single('photo'),(req,res)=>{
 });
 
 router.get('/edit-customer/:id',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let id = req.params.id;
     db.query(`SELECT * FROM customers WHERE id='${id}'`,(err,resp)=>{
         if(!err){
@@ -147,6 +164,10 @@ router.get('/edit-customer/:id',(req,res)=>{
 });
 
 router.post('/edit-customer', upload.single('photo'),(req,res)=>{
+            if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let customerName = req.body.name;
     let customerSurname = req.body.surname;
     let customerPhone = req.body.phone;
@@ -197,6 +218,10 @@ router.post('/edit-customer', upload.single('photo'),(req,res)=>{
 });
 
 router.get('/delete-customer/:id',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let id = req.params.id;
     db.query(`SELECT photo FROM customers WHERE id='${id}'`, (err, customer)=>{
         if(!err){
@@ -217,6 +242,10 @@ router.get('/delete-customer/:id',(req,res)=>{
 });
 
 router.get('/list-customers/:page',(req,res) => {
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     page_id = parseInt(req.params.page),
     currentPage = page_id > 0 ? page_id : 1,
 
@@ -235,13 +264,13 @@ router.get('/list-customers/:page',(req,res) => {
 
 
             /*Query items*/
-            db.query('SELECT * FROM customers LIMIT '+Paginate.perPage+' OFFSET '+Paginate.start,(err,result)=>{
+            console.log('SELECT * FROM customers LIMIT '+Paginate.perPage+' OFFSET '+Paginate.offset);
+            db.query('SELECT * FROM customers LIMIT '+Paginate.perPage+' OFFSET '+Paginate.offset,(err,result)=>{
 
                 data = {
                     customers : result,
                     pages : Paginate.links()
                 }
-                console.log(Paginate.links());
                 // Send data to view
                 res.render('list-customers',data);
             });

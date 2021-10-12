@@ -5,10 +5,18 @@ const router = express.Router();
 const validator = require('validator');
 
 router.get('/add-company',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     res.render('add-company');
 });
 
 router.post('/add-company',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let companyName = req.body.name;
     let companyAddress = req.body.address;
     if(!validator.isAlphanumeric(companyName,'en-US',{ignore:' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
@@ -42,6 +50,10 @@ router.post('/add-company',(req,res)=>{
 
 
 router.get('/edit-company/:id',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let id = req.params.id;
     db.query(`SELECT * FROM companies WHERE id='${id}'`,(err,resp)=>{
         if(!err){
@@ -54,6 +66,10 @@ router.get('/edit-company/:id',(req,res)=>{
 });
 
 router.post('/edit-company',(req,res)=>{
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let companyName = req.body.name;
     let companyAddress = req.body.address;
     let id = req.body.id;
@@ -85,6 +101,10 @@ router.post('/edit-company',(req,res)=>{
 });
 
 router.get('/delete-company/:id',(req,res)=>{
+        if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let id = req.params.id;
     db.query(`DELETE FROM companies WHERE id='${id}'`,(err,resp)=>{
         if(!err){
@@ -95,7 +115,10 @@ router.get('/delete-company/:id',(req,res)=>{
 });
 
 router.get('/list-companies',(req,res)=>{
-
+    if(!req.session.auth){
+        res.redirect('/');
+        return;
+    }
     let messages = req.query.message;
     let status =req.query.s
 
