@@ -1,12 +1,12 @@
 {{#if messages}}
-<div class="flex bg-blue-200 p-4">
+<div class="flex {{message.mainBg}} p-4">
   <div class="mr-4">
-    <div class="h-10 w-10 text-white bg-blue-600 rounded-full flex justify-center items-center">
-      <i class="material-icons">info</i>
+    <div class="h-10 w-10 text-white {{message.icon}} rounded-full flex justify-center items-center">
+      <i class="material-icons"><img id="alert" width="24" height="24" src="/img/{{message.svg}}"></i>
     </div>
   </div>
   <div class="flex justify-between w-full">
-    <div class="text-blue-600">
+    <div class="{{message.alert}}">
       <p class="mb-2 font-bold">
         alert
       </p>
@@ -19,6 +19,27 @@
 {{/if}}
 <div class="flex justify-center h-screen ">
     <div class="flex flex-col m-auto">
+        <form>
+            <div class="w-full px-3 mb-6 md:mb-0">
+                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 mt-2" for="grid-city">
+                    Filter
+                </label>
+                <select name="author_id" class="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                    <option value="0">Choose author</option>
+                    {{#each authors}}
+                        <option value="{{id}}">{{name}} {{surname}}</option>
+                    {{/each}}
+                </select>
+            </div>
+                   <div class="w-full  px-3 mb-6 md:mb-0 ">
+                    {{!-- <label class="text-left block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 mt-2 " for="grid-city">
+                        Submit
+                    </label> --}}
+                    <button type="submit" class="mb-2 mt-2  max-w-fullbg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                    Filter
+                    </button>
+                </div>
+        </form>
         <div class="w-full">
             <div class="border-b border-gray-200 shadow">
                 <table>
@@ -78,14 +99,14 @@
                             </td> --}}
                             <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900">
-                                    {{author_id }}
+                                    {{author_name}} {{author_surname}}
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="/edit-author/{{id}}" class="px-4 py-1 text-sm text-white bg-gray-300 rounded">Edit</a>
+                                <a href="/edit-book/{{id}}" class="px-4 py-1 text-sm bg-green-400 text-white hover:bg-green-500 focus:outline-none my-1 rounded">Edit</a>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="/delete-author/{{id}}" class="px-4 py-1 text-sm text-white bg-red-500 rounded">Delete</a>
+                                <a href="/delete-book/{{id}}" class="px-4 py-1 text-sm bg-red-400 text-white hover:bg-red-500 focus:outline-none my-1 rounded">Delete</a>
                             </td>
                         </tr>
                         {{/each}}

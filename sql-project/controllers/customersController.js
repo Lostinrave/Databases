@@ -108,13 +108,13 @@ router.post('/add-customer', upload.single('photo'),(req,res)=>{
     //image/jpeg
     //image/png
 
-    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪžŽ'})
     || 
     !validator.isLength(customerName,{min:2,max:50})){
         res.redirect('/list-customers/?message=Type in customer name&s=danger');
         return;
     }
-    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪžŽ'}) 
     || 
     !validator.isLength(customerSurname,{min:3,max:100})){
         res.redirect('/list-customers/?message=Type in customer surname&s=danger');
@@ -181,13 +181,13 @@ router.post('/edit-customer', upload.single('photo'),(req,res)=>{
     //image/jpeg
     //image/png
 
-    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    if(!validator.isAlpha(customerName,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪžŽ'})
     || 
     !validator.isLength(customerName,{min:2,max:50})){
         res.redirect('/list-customers/?message=Type in customer name&s=danger');
         return;
     }
-    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
+    if(!validator.isAlpha(customerSurname,'en-US',{ignore:' ąĄčČęĘėĖįĮšŠųŲūŪžŽ'}) 
     || 
     !validator.isLength(customerSurname,{min:3,max:100})){
         res.redirect('/list-customers/?message=Type in customer surname&s=danger');
